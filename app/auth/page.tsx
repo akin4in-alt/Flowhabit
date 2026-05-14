@@ -66,10 +66,15 @@ export default function AuthPage() {
     setError(null)
     setLoading(true)
     try {
+      const fromEnv = process.env.NEXT_PUBLIC_SITE_URL?.trim().replace(/\/$/, '')
+      const siteUrl =
+        fromEnv && fromEnv.length > 0
+          ? fromEnv
+          : 'https://flowhabit-weld.vercel.app'
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback`,
+          redirectTo: `${siteUrl}/auth/callback`,
         },
       })
       if (error) setError(error.message)
