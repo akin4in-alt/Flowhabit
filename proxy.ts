@@ -35,7 +35,10 @@ export async function proxy(request: NextRequest) {
 
   const { pathname } = request.nextUrl
   const isProtected = pathname.startsWith('/dashboard')
-  const isAuthPage = pathname.startsWith('/auth')
+  // OAuth return URL — must not be treated as «страница логина»: иначе при наличии
+  // сессии proxy редиректит на /dashboard до exchangeCodeForSession и ломает OAuth.
+  const isAuthPage =
+    pathname.startsWith('/auth') && !pathname.startsWith('/auth/callback')
 
   if (isProtected && !user) {
     const url = request.nextUrl.clone()
